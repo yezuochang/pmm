@@ -1,0 +1,5 @@
+
+1. Run pmm_setup.m first
+2. Run [G,W,F,H]=pmm(infile, q, opts);
+
+See demo/demo.m for getting start.

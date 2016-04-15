@@ -1,0 +1,10 @@
+
+This directory contains third-party packages.
+
+./cvx
+	Convex programing toolbox
+	http://cvxr.com/cvx
+
+./mfit
+	Matrix fitting toolbox
+	http://www.energy.sintef.no/Produkt/VECTFIT/
