@@ -43,11 +43,11 @@ for k=1:nf
 
     Fk=wgt*JJ;
     Gk=wgt*vec(Yv(:,:,k));
-    [I1,J1,V1]=find(Fk);
+    [I1,J1,V1]=find(Fk);   
     if k == 1
-        I=repmat(I1,1,nf);
-        J=repmat(J1,1,nf);
-        V=repmat(V1,1,nf);
+        I=repmat(I1(:),1,nf);
+        J=repmat(J1(:),1,nf);
+        V=repmat(V1(:),1,nf);        
     else
         I(:,k)=I1+(k-1)*m2;
         J(:,k)=J1;
