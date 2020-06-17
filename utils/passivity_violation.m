@@ -6,11 +6,12 @@ if tol < 0
     tol = 0;
 end
 
-if G.parametertype == 'Y'
-    [r2,f2,slope]=half_size(G,tol);
-else
-    [r2,f2]=full_size(G,tol);
-end
+% if G.parametertype == 'Y'
+%     [r2,f2,slope]=half_size(G,tol);
+% else
+%     [r2,f2]=full_size(G,tol);
+% end
+[r2,f2]=full_size(G,tol);
 f2=sort(f2);
 r2=sort(r2);
 

@@ -46,7 +46,7 @@ for c=1:m
     end
 end
 %suptitle(sprintf('%s (|E|=%g)',supertitle,err));
-suptitle(' ');
+% subtitle(' ');
 
 return;
 

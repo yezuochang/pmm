@@ -9,26 +9,26 @@ opts=pmm_default;
 % plot_xf(G,F,H)
 
 %% A medium-size problem
-filename = 'IEEE39BUS1.s1p';
+filename = 'HHM1506.s3p';
 % Vector fitting only
-opts.method='vf_only';
-[G,W,F,H]=pmm(filename, 20, opts);
-figure; plot_xf(G,F,H);legend('Data','Model','Error');
-figure; plot_haeig(G);
-
-%SDP method 
-opts.method='sdp';
-[G,W,F,H]=pmm(filename, 20, opts);
-figure; plot_xf(G,F,H);
-
-% Local compensation
-opts.method='lc_only';
-[G1,W1,F,H]=pmm(filename, 20, opts);
-figure; plot_xf(G1,F,H);
-%figure; plot_haeig(G);
+% opts.method='vf_only';
+% [G,W,F,H]=pmm(filename, 20, opts);
+% figure; plot_xf(G,F,H);legend('Data','Model','Error');
+% figure; plot_haeig(G);
+% 
+% %SDP method 
+% opts.method='sdp';
+% [G,W,F,H]=pmm(filename, 20, opts);
+% figure; plot_xf(G,F,H);
+% 
+% % Local compensation
+% opts.method='lc_only';
+% [G1,W1,F,H]=pmm(filename, 20, opts);
+% figure; plot_xf(G1,F,H);
+% %figure; plot_haeig(G);
 
 % Local compensation + DAO method
-% opts.method='lc_dao';
-% [G,W,F,H]=pmm('HHM1506.s3p', 20, opts);
-% figure; plot_xf(G,F,H);legend('Data','Model','Error');
-%figure; plot_haeig(G);
+opts.method='lc_dao';
+[G,W,F,H]=pmm('HHM1506.s3p', 20, opts);
+figure; plot_xf(G,F,H);legend('Data','Model','Error');
+figure; plot_haeig(G);

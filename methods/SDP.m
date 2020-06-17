@@ -1,6 +1,7 @@
 function [G,W,report]=sdp(G0,W0,freq,Yv,opts)
 
-if G0.parametertype ~= 'Y'
+if G0.parametertype == 'S'
+    G0 = ss_s2y(G0, 50);
     fprintf('Warning: SDP method only works for hybrid (Y- or Z-) systems.\n');
     fprintf('Will return just AS IS.\n');
     G=G0;
@@ -46,7 +47,7 @@ if optget(opts,'enforceDC',0)
     beq = vec(Yv(:,:,1));
     cvx_begin sdp;
         variable Z(n+m,n+m) hermitian;
-        Z-eye(n+m,n+m)*1e-6>=0;
+        Z>=0;
         VC=Jcn*vec(Z(1:n,1:n))+vec(Z(n+1:n+m,1:n));
         VD=vec(Z(n+1:n+m,n+1:n+m))/2;
         y=[VC;VD];
