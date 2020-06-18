@@ -14,20 +14,22 @@ end
 % data=read(rfdata.data,filename);
 % F=data.Freq;
 % S=data.S_Parameters;
-[F,S]=SXPParse(filename);
+% [F,S]=SXPParse(filename);
+sobj = sparameters(filename);
+F = sobj.Frequencies;
+S = sobj.Parameters;
 
-
-if ~opts.enforceDC
-    avg=sum(F)/length(F);
-    ix=find(F<avg*1e-10);    
-    if ~isempty(ix)
-        fprintf('Warning: The following frequencies are removed as they are too small comparing to other frequencies. \n');
-        fprintf('%e\n', F(ix));
-        px=setdiff(1:length(F),ix);
-        F=F(px);
-        S=S(:,:,px);
-    end
-end
+% if ~opts.enforceDC
+%     avg=sum(F)/length(F);
+%     ix=find(F<avg*1e-10);    
+%     if ~isempty(ix)
+%         fprintf('Warning: The following frequencies are removed as they are too small comparing to other frequencies. \n');
+%         fprintf('%e\n', F(ix));
+%         px=setdiff(1:length(F),ix);
+%         F=F(px);
+%         S=S(:,:,px);
+%     end
+% end
 
 if optget(opts,'parametertype','Y') == 'Y'
     H=s2y(S,50);

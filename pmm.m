@@ -18,7 +18,8 @@ opts.q=q;
 
 %% Step 0: load data
 [F,H]=ldstone(inputfile,opts);
-[F,H]=freqinterp(F,H,opts);
+
+% [F,H]=freqinterp(F,H,opts);
 
 opts=select_method(size(H,1),q,opts);
 check_methods(opts);

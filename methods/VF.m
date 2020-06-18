@@ -31,14 +31,16 @@ Gc.parametertype=optget(opts,'parametertype','Y');
 G=ss_real(Gc);
 
 if F(1) == 0 && optget(opts,'enforceDC',0)
-    [R,QG,del2]=preprocess(F,H,G,opts);
     [n,m] = size(G.B);
-    % y = R\QG;
-
-    Q = R'*R;
-    f = -QG'*R;
     Aeq = [kron(-G.B'*inv(G.A)',eye(m)),eye(m^2)];
-    beq = vec(H(:,:,1));
+    H0  = H(:,:,1);
+    beq = vec(H0);
+    F = F(2:end);
+    H = H(:,:,2:end);
+    [R,QG,del2]=preprocess(F,H,G,opts);    
+    % y = R\QG;
+    Q = R'*R;
+    f = -QG'*R;    
     options.LargeScale = 'off';
     options.TypicalX = [vec(G.C);vec(G.D)];
     options.Display = 'off';
@@ -46,6 +48,7 @@ if F(1) == 0 && optget(opts,'enforceDC',0)
     y = real(y);
     G.C = reshape(y(1:m*n),m,n);
     G.D = reshape(y((m*n+1):(n*m+m^2)),m,m);
+    G.D = H0 + G.C*(G.A\G.B);
 end
 
 W=[];
