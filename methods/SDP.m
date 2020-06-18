@@ -1,4 +1,4 @@
-function [G,W,report]=sdp(G0,W0,freq,Yv,opts)
+function [G,W,report]=sdp(G0,W0,F,H,opts)
 
 if G0.parametertype == 'S'
     G0 = ss_s2y(G0, 50);
@@ -8,8 +8,15 @@ if G0.parametertype == 'S'
     W=G0;
     return;
 end
-
-[R,QG,del2]=preprocess(freq,Yv,G0,opts);
+F0 = -1;
+H0 = [];
+if F(1) == 0 && optget(opts,'enforceDC',0)
+    F0  = 0;
+    H0  = H(:,:,1);
+    F = F(2:end);
+    H = H(:,:,2:end);
+end
+[R,QG,del2]=preprocess(F,H,G0,opts);
 [A,B,C,D]=ss_data(G0);
 A=sparse(A);
 B=sparse(B);
@@ -23,7 +30,7 @@ Z=kronvec(A',In)+kronvec(In,A);
 [L,U]=lu(Z);
 M=-inv(U)*inv(L); % M=-inv(Z)
 Jcn=kronvec(B',In)*M;
-[C,D]=solve_cvx(n,m,Jcn,R,QG,del2,G0,freq,Yv,opts);
+[C,D]=solve_cvx(n,m,Jcn,R,QG,del2,G0,F,H,F0,H0,opts);
 %[C,D]=solve_yalmip(n,m,Jcn,R,QG,del2);
 G=G0;
 G.C=C;
@@ -34,17 +41,15 @@ else
     W=[];
 end
 
-function [C,D]=solve_cvx(n,m,Jcn,R,QG,del2,G,freq,Yv,opts)
+function [C,D]=solve_cvx(n,m,Jcn,R,QG,del2,G,F,H,F0,H0,opts)
 if optget(opts,'verbose',0) == 0
     cvx_quiet(true);
 else
     cvx_quiet(false);
 end
-if optget(opts,'enforceDC',0)
-    Q = R'*R;
-    f = -QG'*R;
+if F0 == 0 && optget(opts,'enforceDC',0)
     Aeq = [kron(-G.B'*inv(G.A)',eye(m)),eye(m^2)];
-    beq = vec(Yv(:,:,1));
+    beq = vec(H0);
     cvx_begin sdp;
         variable Z(n+m,n+m) hermitian;
         Z>=0;
@@ -56,6 +61,9 @@ if optget(opts,'enforceDC',0)
         res=E'*E+del2;
         minimize(res);
     cvx_end;
+    C=reshape(VC,m,n);
+    D=reshape(VD,m,m);
+%     D=H(:,:,1)+G.C*(G.A\G.B);
 else
     cvx_begin sdp;
         variable Z(n+m,n+m) hermitian;    
@@ -67,11 +75,12 @@ else
         res=E'*E+del2;
         minimize(res);
     cvx_end;
+    C=reshape(VC,m,n);
+    D=reshape(VD,m,m);
 end
-C=reshape(VC,m,n);
-D=reshape(VD,m,m);
 
-function [C,D]=solve_cvx2(n,m,Jcn,R,QG,del2,G,freq,Yv,opts)
+
+function [C,D]=solve_cvx2(n,m,Jcn,R,QG,del2,G,F,H,opts)
 if optget(opts,'verbose',0) == 0
     cvx_quiet(true);
 else
@@ -82,7 +91,7 @@ if optget(opts,'enforceDC',0)
     f = -QG'*R;
     np = n/m;
     Aeq = [kron(-G.B'*inv(G.A)',eye(m)),eye(m^2)];
-    beq = vec(Yv(:,:,1));
+    beq = vec(H(:,:,1));
     cvx_begin sdp;
         variable Z(n+m,n+m) hermitian;
         Z-eye(n+m,n+m)*1e-6>=0;
