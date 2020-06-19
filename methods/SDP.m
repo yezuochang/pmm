@@ -63,7 +63,7 @@ if F0 == 0 && optget(opts,'enforceDC',0)
     cvx_end;
     C=reshape(VC,m,n);
     D=reshape(VD,m,m);
-%     D=H(:,:,1)+G.C*(G.A\G.B);
+%     D=H0+G.C*(G.A\G.B);
 else
     cvx_begin sdp;
         variable Z(n+m,n+m) hermitian;    
@@ -78,7 +78,6 @@ else
     C=reshape(VC,m,n);
     D=reshape(VD,m,m);
 end
-
 
 function [C,D]=solve_cvx2(n,m,Jcn,R,QG,del2,G,F,H,opts)
 if optget(opts,'verbose',0) == 0

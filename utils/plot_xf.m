@@ -10,7 +10,7 @@ m=min(m,2);
 
 if exist('H')
     err1=xf_error(H1,H,2);
-    fprintf('err1 = %e\n',err1);
+%     fprintf('err1 = %e\n',err1);
     H=permute(H,[3,1,2]);
 end
 H1=permute(H1,[3,1,2]);

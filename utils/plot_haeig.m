@@ -28,8 +28,7 @@ if nargin < 2 || isempty(limits)
         limits(2)=maxf;
     else
         f=limits(1):step:limits(2);
-    end
-    
+    end   
     
     if length(f) == 0
         r=eig(full(mdl.A));

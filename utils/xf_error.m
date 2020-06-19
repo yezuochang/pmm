@@ -13,7 +13,7 @@ for k=1:nf
         case 2
             wgt=1./vec(abs(H1(:,:,k)));            
         case 3
-            wgt=1./vec(sqrt(abs(H1(:,:,k))));
+            wgt=1./vec(sqrt(abs(H1(:,:,k))+1e-3));
         case 4
             wgt=ones(m2,1)./norm(H1(:,:,k));
         case 5

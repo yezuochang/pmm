@@ -18,18 +18,21 @@ end
 sobj = sparameters(filename);
 F = sobj.Frequencies;
 S = sobj.Parameters;
+ix=find(F>1e10);
+F=F(1:ix);
+S=S(:,:,1:ix);
 
-% if ~opts.enforceDC
-%     avg=sum(F)/length(F);
-%     ix=find(F<avg*1e-10);    
-%     if ~isempty(ix)
-%         fprintf('Warning: The following frequencies are removed as they are too small comparing to other frequencies. \n');
-%         fprintf('%e\n', F(ix));
-%         px=setdiff(1:length(F),ix);
-%         F=F(px);
-%         S=S(:,:,px);
-%     end
-% end
+if ~opts.enforceDC
+    avg=sum(F)/length(F);
+    ix=find(F<avg*1e-10);    
+    if ~isempty(ix)
+        fprintf('Warning: The following frequencies are removed as they are too small comparing to other frequencies. \n');
+        fprintf('%e\n', F(ix));
+        px=setdiff(1:length(F),ix);
+        F=F(px);
+        S=S(:,:,px);
+    end
+end
 
 if optget(opts,'parametertype','Y') == 'Y'
     H=s2y(S,50);

@@ -3,8 +3,12 @@ function [R,QG,del2]=preprocess(freq,Yv,G0,opts)
 if ~isreal(G0.A)
     G0=ss_real(G0);
 end
-wgt_scheme = optget(opts,'wgt_scheme',3);
 
+wgt_scheme = optget(opts,'wgt_scheme',3);
+if freq(1) == 0 && optget(opts,'enforceDC',0)
+    freq = freq(2:end);
+    Yv = Yv(:,:,2:end);
+end
 [n,m]=size(G0.B);
 m2=m*m;
 nvar=n*m+m2;

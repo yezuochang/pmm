@@ -17,7 +17,6 @@ r2=sort(r2);
 
 function [r2,f2,slope]=full_size(G,tol);
 
-
 if strcmp(G.parametertype,'Y')
     [M,N]=EHP_H(G);
 else
@@ -29,8 +28,6 @@ r1=imag(r(ix));
 ix=find(r1>=0);
 r2=r1(ix);
 f2=r2/2/pi;
-
-
 
 function [r2,f2,slope]=half_size(G,tol);
 % 1. Adam Semlyen, A Half-Size Singularity Test Matrix for Fast and. Reliable Passivity Assessment

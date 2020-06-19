@@ -1,7 +1,8 @@
 function [F,H]=freq_interp(F,H,opts)
 
 if strcmp(optget(opts,'freqinterp',''),'lin')
-    F1=linspace(min(F),max(F),length(F));
+    num_samples = optget(opts,'num_samples',length(F))
+    F1=linspace(min(F),max(F),num_samples);
     H1=permute(H,[3,1,2]);
     m = size(H1,2);
     H=[];

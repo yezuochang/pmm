@@ -19,7 +19,7 @@ opts.q=q;
 %% Step 0: load data
 [F,H]=ldstone(inputfile,opts);
 
-% [F,H]=freqinterp(F,H,opts);
+[F,H]=freqinterp(F,H,opts);
 
 opts=select_method(size(H,1),q,opts);
 check_methods(opts);
@@ -35,6 +35,9 @@ if isfield(opts,'Func')
         if ~info_k.success
            break;
         end
+        if opts.enforceDC == 1
+            G.D = H1(:,:,1)+G.C*(G.A\G.B);
+        end
     end
 end
 % if (isempty(W) || optget(opts,'sdp',0))
@@ -45,7 +48,6 @@ end
 G=ss_scale(G,scale);
 if exist('W','var') && ~isempty(W)
     W=ss_scale(W,scale);
-
     ss_export(G,W,subcktname,outputfile,opts);
     ss_verify(G,W,F,H,opts);
 end
@@ -70,7 +72,7 @@ t0=cputime;
 [G,W]=func(G,W,F1,H1,opts);
 t=cputime-t0;
 
-r2=passivity_violation(G);
+[r2,f2]=passivity_violation(G);
 if passive_out && ~isempty(r2)
     fprintf('Warning: %s claims but fails to ensure passivity of the system.\n', funcname);
     fprintf('Check the following frequencies for diagnosis.\n');
@@ -80,7 +82,7 @@ else
     info.success=1;
 end
 
-wgt_scheme=optget(opts,'wgt_scheme',1);
+wgt_scheme=optget(opts,'wgt_scheme',3);
 info.func=func2str(func);
 info.time=t;
 info.error=ss_error(G,F1,H1,wgt_scheme);
@@ -101,7 +103,6 @@ if isempty(filepath)
 end
 outputfile=sprintf('%s/%s_ncss.scs',filepath,filename);
 subcktname=sprintf('%s_ncss',filename);
-
 
 
 function opts=select_method(m, q, opts)
