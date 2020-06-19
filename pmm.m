@@ -50,16 +50,21 @@ if exist('W','var') && ~isempty(W)
     W=ss_scale(W,scale);
     ss_export(G,W,subcktname,outputfile,opts);
     ss_verify(G,W,F,H,opts);
+else
+    W = G;
+    W.C = W.C*0;
+    ss_export(G,W,subcktname,outputfile,opts);
 end
-print_info(info);
+print_info(info)
 
 function print_info(info)
-fprintf('  FuncName\t     Time     \t     Error     \tPassivity\n');
-fprintf('------------------------------------------------------\n');
+fprintf('  FuncName\t   Time     \t   Error          Error(DC)    \tPassivity\n');
+fprintf('--------------------------------------------------------------------\n');
 for c=1:length(info)
-    fprintf('%10s\t%e\t%e\t%s\n',...
-        info{c}.func,info{c}.time,info{c}.error,info{c}.passivity);
+    fprintf('%10s\t%e\t%e\t%e\t%s\n',...
+        info{c}.func,info{c}.time,info{c}.error,info{c}.dc_error,info{c}.passivity);
 end
+
 
 function [G,W,info]=func_call(funcname,G,W,F1,H1,opts)
 global pmm_methods;
@@ -82,15 +87,18 @@ else
     info.success=1;
 end
 
-wgt_scheme=optget(opts,'wgt_scheme',3);
 info.func=func2str(func);
 info.time=t;
-info.error=ss_error(G,F1,H1,wgt_scheme);
+info.error=ss_error(G,F1,H1,opts);
 if isempty(r2)
     info.passivity='passive';
 else
     info.passivity='non-passive';
 end
+
+H0 = H1(:,:,1);
+HH = G.D-G.C*(G.A\G.B);
+info.dc_error = max(vec(abs(H0-HH)));
 
 %fprintf('%10s\t%e\t%e\t%d\n',...
 %    info{c}.func,info{c}.time,info{c}.error,info{c}.passivity);
@@ -104,9 +112,7 @@ end
 outputfile=sprintf('%s/%s_ncss.scs',filepath,filename);
 subcktname=sprintf('%s_ncss',filename);
 
-
 function opts=select_method(m, q, opts)
-
 method=optget(opts,'method','auto');
 if strcmp(method,'user_defined')
     return;
@@ -135,6 +141,11 @@ end
 
 if strcmp(method, 'lc_only')
     opts.Func{2} = 'LC';    
+    return;
+end
+
+if strcmp(method, 'asym_only')
+    opts.Func{2} = 'ASYM';    
     return;
 end
 

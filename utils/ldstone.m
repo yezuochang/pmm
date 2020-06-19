@@ -15,10 +15,16 @@ end
 % F=data.Freq;
 % S=data.S_Parameters;
 % [F,S]=SXPParse(filename);
+
+
+
 sobj = sparameters(filename);
 F = sobj.Frequencies;
 S = sobj.Parameters;
-ix=find(F>1e10);
+
+% remove samples with freq>fmax
+fmax = optget(opts,'fmax',1e100);
+ix=find(F>fmax);
 F=F(1:ix);
 S=S(:,:,1:ix);
 

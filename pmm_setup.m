@@ -7,6 +7,7 @@ preinstall_methods;
 function preinstall_methods()
 pmm_install('VF', 'Vector Fitting', 0, 0);
 pmm_install('SDP', 'SDP Method', 0, 1);
+pmm_install('ASYM', 'Asymptotic passivity', 0, 1);
 pmm_install('LC', 'Local Compensation', 0, 1);
 pmm_install('EPM', 'Eigenvalue Perturbation', 0, 1);
 pmm_install('FRP', 'FRP Method', 0, 1);

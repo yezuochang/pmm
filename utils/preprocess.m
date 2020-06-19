@@ -24,7 +24,13 @@ B=sparse(B);
 %F=zeros(m2*nf,nvar);
 T=[];
 G=zeros(m2*nf,1);
-
+if optget(opts,'freq_wgt_bw',0) == 0
+    freq_weight = freq*0+1;    
+else
+    bw = optget(opts,'freq_wgt_bw',0);
+    rho = freq(end)*bw;
+    freq_weight = exp(-freq.*freq/(rho*rho));    
+end
 for k=1:nf
     s=2*pi*j*freq(k);    
     JJ=[kronvec(Im,(s*In-A)\B) kronvec(Im,Im)];
@@ -43,8 +49,7 @@ for k=1:nf
             wgt=ones(m2,1);
     end
     %wgt=min(wgt,100);
-    wgt=spdiags(wgt, 0, m2, m2);
-
+    wgt=freq_weight(k)*spdiags(wgt, 0, m2, m2);
     Fk=wgt*JJ;
     Gk=wgt*vec(Yv(:,:,k));
     [I1,J1,V1]=find(Fk);   
@@ -59,7 +64,7 @@ for k=1:nf
     end
     %F=[F;Fk];
     %F((k-1)*m2+1:k*m2,1:nvar)=Fk;
-    G((k-1)*m2+1:k*m2)=Gk;
+    G((k-1)*m2+1:k*m2)=Gk;    
 end
 
 F=sparse(I,J,V,m2*nf,nvar);

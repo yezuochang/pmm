@@ -44,7 +44,7 @@ Ch=(Ch+Ch')/2;
 if do_newton
     [K,report]=care_newton(Ah,Bh,Ch,[],[],[],K0); % iterative method as an alternative
     L=Qinv'*C-Qinv'*B'*K;
-    W=ssm(A,B,L,Q,parametertype);
+    W=ssmodel(A,B,L,Q,parametertype);
 else
     [K,L1,G1,report]=care(Ah,Bh,Ch);
     if report >= 0

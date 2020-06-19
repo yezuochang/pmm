@@ -16,6 +16,7 @@ assert(S1.parametertype == 'S');
 [A,B,C,D]=ss_data(S1);
 [n,m]=size(B);
 I=eye(m);
+Z0=I*Z0;
 T=inv(I+D);
 Y1=1/sqrt(Z0);
 S2.A=A-B*T*C;
