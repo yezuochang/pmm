@@ -25,8 +25,11 @@ S = sobj.Parameters;
 % remove samples with freq>fmax
 fmax = optget(opts,'fmax',1e100);
 ix=find(F>fmax);
-F=F(1:ix);
-S=S(:,:,1:ix);
+
+if ~isempty(ix)
+    F=F(1:ix);
+    S=S(::,1:ix);
+end
 
 if ~opts.enforceDC
     avg=sum(F)/length(F);
